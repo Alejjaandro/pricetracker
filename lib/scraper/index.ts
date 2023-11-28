@@ -1,6 +1,6 @@
 import axios from 'axios';
 import * as cheerio from 'cheerio';
-import { extractCurrency, extractPrice } from '../utils';
+import { extractCategory, extractCurrency, extractPrice, getAveragePrice, getHighestPrice, getLowestPrice } from '../utils';
 
 export async function scrapeAmazonProduct(productURL: string) {
     
@@ -24,7 +24,6 @@ export async function scrapeAmazonProduct(productURL: string) {
 
     try {
         const response = await axios.get(productURL, options);
-        // console.log(response.data);
         const $ = cheerio.load(response.data);
 
         // Extract the data we want. We can find the selector using the browser dev tools.
@@ -39,7 +38,16 @@ export async function scrapeAmazonProduct(productURL: string) {
             $('td.a-span12.a-color-secondary.a-size-base span.a-price.a-text-price.a-size-base')
         );
 
-        const discount = ( ( (originalPrice - currentPrice) / originalPrice) * 100).toPrecision(2);
+        const stars = $('#acrPopover').attr('title') || 'No rating';
+        const reviewCount = $('#averageCustomerReviews #acrCustomerReviewText').text().trim() || 'No reviews';
+        const category = extractCategory($('#wayfinding-breadcrumbs_feature_div ul li span a'));
+
+        let discount;
+        if(currentPrice && originalPrice) {
+            discount = ((originalPrice - currentPrice) / originalPrice * 100).toPrecision(2);
+        } else {
+            discount = 0;
+        }
 
         const outOfStock = $('#availability span').text().trim().toLowerCase() === 'currently unavailable.';
         
@@ -47,25 +55,39 @@ export async function scrapeAmazonProduct(productURL: string) {
         const imagesArray = Object.keys(JSON.parse(images));
 
         const currency = extractCurrency($('span.a-price-symbol'));
+        
+        const priceHistory = [
+            {
+                date: new Date(),
+                price: Number(originalPrice) || Number(currentPrice)
+            },
+            {
+                date: new Date(),
+                price: Number(currentPrice) || Number(originalPrice)
+            }
+        ]
+
+        console.log(typeof stars, typeof reviewCount);
 
         // Return the data as an object
         const data = {
             productURL,
             title,
-            category: 'Category',
+            stars,
+            reviewCount,
+            category,
             currentPrice: Number(currentPrice) || Number(originalPrice),
             originalPrice: Number(originalPrice) || Number(currentPrice),
-            priceHistory: [],
+            priceHistory,
             outOfStock,
             image: imagesArray[0],
             currency,
             discount: Number(discount) || 0,
-            lowestPrice: Number(currentPrice) || Number(originalPrice),
-            highestPrice: Number(currentPrice) || Number(originalPrice),
-            averagePrice: Number(currentPrice) || Number(originalPrice)
+            lowestPrice: getLowestPrice(priceHistory),
+            highestPrice: getHighestPrice(priceHistory),
+            averagePrice: getAveragePrice(priceHistory)
         }
         
-        // console.log(data);
         return data;
         
     } catch (error: any) {

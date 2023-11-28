@@ -13,12 +13,11 @@ export async function scrapeAndStoreProduct(productURL: string) {
     try {
         connectToDB();
 
-        const scrapedProduct = await scrapeAmazonProduct(productURL);
+        let scrapedProduct = await scrapeAmazonProduct(productURL);
+        
         if (!scrapedProduct) return;
-
+        
         // Save the product to the database
-        let product = scrapedProduct;
-
         const existingProduct = await Product.findOne({ url: scrapedProduct.productURL });
         if (existingProduct) {
             // Update the existing product
@@ -27,7 +26,7 @@ export async function scrapeAndStoreProduct(productURL: string) {
                 { price: scrapedProduct.currentPrice }
             ];
 
-            product = {
+            scrapedProduct = {
                 ...scrapedProduct,
                 priceHistory: updatedPriceHistory,
                 lowestPrice: getLowestPrice(updatedPriceHistory),
@@ -38,9 +37,9 @@ export async function scrapeAndStoreProduct(productURL: string) {
 
         const newProduct = await Product.findOneAndUpdate(
             { url: scrapedProduct.productURL },
-            product,
+            scrapedProduct,
             { upsert: true, new: true }
-        );
+        );  
 
         revalidatePath(`/products/${newProduct._id}`);
 

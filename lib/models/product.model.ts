@@ -21,13 +21,14 @@ const productSchema = new mongoose.Schema({
     discount: { type: Number },
 
     description: { type: String },
-    category: { type: String, default: 'Category' },
+    category: { type: String },
+    stars: { type: String },
     reviewCount: { type: String },
     isOutOfStock: { type: String },
 
     users: [
         { email: { type: String, reqired: true } }
-    ], default: []
+    ],
 
 }, { timestamps: true });
 

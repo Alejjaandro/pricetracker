@@ -15,9 +15,9 @@ type Props = {
 const page = async ({ params: { id } }: Props) => {
 
     const product = await getProductById(id);
-    if (!product) redirect('/')
+    if (!product) redirect('/');    
 
-    const similarProducts = await getSimilarProducts(id);
+    const similarProducts = await getSimilarProducts(id);    
 
     return (
         <div className="product-container">
@@ -38,6 +38,9 @@ const page = async ({ params: { id } }: Props) => {
                             <p className="text-[28px] text-secondary font-semibold">
                                 {product.title}
                             </p>
+                            <p className="text-[28px] text-green-600 font-semibold">
+                                {`-${product.discount}% OFF`}
+                            </p>
                         </div>
 
                         <div className="flex items-center gap-3">
@@ -50,7 +53,7 @@ const page = async ({ params: { id } }: Props) => {
                                 />
 
                                 <p className="text-base font-semibold text-[#D46F77]">
-                                    {product.reviewsCount}
+                                    {product.reviewCount}
                                 </p>
                             </div>
 
@@ -94,7 +97,7 @@ const page = async ({ params: { id } }: Props) => {
                                         height={16}
                                     />
                                     <p className="text-sm text-primary-orange font-semibold">
-                                        {product.stars || '25'}
+                                        {product.stars || 4}
                                     </p>
                                 </div>
 
@@ -106,14 +109,13 @@ const page = async ({ params: { id } }: Props) => {
                                         height={16}
                                     />
                                     <p className="text-sm text-secondary font-semibold">
-                                        {product.reviewsCount} Reviews
+                                        {product.reviewsCount}
                                     </p>
                                 </div>
                             </div>
 
                             <p className="text-sm text-black opacity-50">
-                                <span className="text-primary-green font-semibold">93% </span> of
-                                buyers have recommeded this.
+                                <span className="font-semibold"> {product.category} </span>
                             </p>
                         </div>
                     </div>

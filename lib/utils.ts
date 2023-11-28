@@ -6,9 +6,9 @@ export function extractPrice(...elements: any) {
         // Cheerio element
         const priceText = element.children().first().text();
 
-        // Remove all non-numeric characters
-        if (priceText) {
-            const cleanPrice = priceText.replace(/[^\d.]/g, '');
+        // Remove all non-numeric characters except for the decimal point
+        if (priceText && priceText !== ' ') {
+            const cleanPrice = priceText.replace(/[^\d.]/g, ".");
 
             let firstPrice;
 
@@ -54,14 +54,24 @@ export function getLowestPrice(priceList: PriceHistoryItem[]) {
 
 export function getAveragePrice(priceList: PriceHistoryItem[]) {
     const sumOfPrices = priceList.reduce((total, current) => total + current.price, 0);
-    const averagePrice = sumOfPrices / priceList.length || 0;
+    const averagePrice = sumOfPrices / priceList.length;
 
     return averagePrice;
 }
 
 export const formatNumber = (num: number = 0) => {
     return num.toLocaleString(undefined, {
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 0,
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
     });
 };
+
+export const extractCategory = (element: any) => {
+
+    const category = element.text().trim();
+    const cleanCategory = category.replace(/\s\s+/g, ' -> ');
+
+    // console.log(cleanCategory);
+
+    return cleanCategory ? cleanCategory : "Category not found";
+}
