@@ -29,9 +29,7 @@ export async function scrapeAmazonProduct(productURL: string) {
         // Extract the data we want. We can find the selector using the browser dev tools.
         const title = $('#productTitle').text().trim();
 
-        const currentPrice = extractPrice(
-            $('span.a-price')
-        );
+        const currentPrice = extractPrice($('span.a-price'));
 
         const originalPrice = extractPrice(
             $('div.a-section.a-spacing-small.aok-align-center span.a-price.a-text-price'),
@@ -67,7 +65,7 @@ export async function scrapeAmazonProduct(productURL: string) {
             }
         ]
 
-        // console.log(currentPrice, originalPrice);
+        console.log(currentPrice, originalPrice, discount);
 
         // Return the data as an object
         const data = {

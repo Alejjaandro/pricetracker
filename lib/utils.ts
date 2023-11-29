@@ -8,14 +8,22 @@ export function extractPrice(...elements: any) {
 
         // Remove all non-numeric characters except for the decimal point
         if (priceText && priceText !== ' ') {
-            const cleanPrice = priceText.replace(/[^\d,]/g, "");
+            // We need to remove all non-numeric characters
+            const cleanPrice = priceText.replace(/[^\d]/g, "");
 
+            // We cout the number of characters in the price,
+            // so we can add the decimal point in the second last position.
+            // We extract the decimals from the price.
+            let priceLength = cleanPrice.length;
+            let decimals = cleanPrice.slice(priceLength - 2, priceLength);
+
+            // We add a decimal point in the second last position and add the decimals.
             let firstPrice;
-
             if (cleanPrice) {
-                firstPrice = cleanPrice.replace(',', '.');
+                firstPrice = cleanPrice.slice(0, priceLength - 2) + '.' + decimals;
             }
-            // console.log(priceText, cleanPrice, firstPrice);
+            
+            console.log(priceText, cleanPrice, firstPrice);
             
             return firstPrice || cleanPrice;
         }
