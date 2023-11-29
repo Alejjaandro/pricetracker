@@ -8,14 +8,15 @@ export function extractPrice(...elements: any) {
 
         // Remove all non-numeric characters except for the decimal point
         if (priceText && priceText !== ' ') {
-            const cleanPrice = priceText.replace(/[^\d.]/g, ".");
+            const cleanPrice = priceText.replace(/[^\d,]/g, "");
 
             let firstPrice;
 
             if (cleanPrice) {
-                firstPrice = cleanPrice.match(/\d+\.\d{2}/)?.[0];
+                firstPrice = cleanPrice.replace(',', '.');
             }
-
+            // console.log(priceText, cleanPrice, firstPrice);
+            
             return firstPrice || cleanPrice;
         }
     }
@@ -60,7 +61,7 @@ export function getAveragePrice(priceList: PriceHistoryItem[]) {
 }
 
 export const formatNumber = (num: number = 0) => {
-    return num.toLocaleString(undefined, {
+    return num.toLocaleString("de-DE", {
         minimumFractionDigits: 2,
         maximumFractionDigits: 2,
     });

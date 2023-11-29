@@ -39,7 +39,7 @@ export async function scrapeAmazonProduct(productURL: string) {
         );
 
         const stars = $('#acrPopover').attr('title') || 'No rating';
-        const reviewCount = $('#averageCustomerReviews #acrCustomerReviewText').text().trim() || 'No reviews';
+        const reviewCount = $('#averageCustomerReviews_feature_div #averageCustomerReviews #acrCustomerReviewText').text().trim() || 'No reviews';
         const category = extractCategory($('#wayfinding-breadcrumbs_feature_div ul li span a'));
 
         let discount;
@@ -67,7 +67,7 @@ export async function scrapeAmazonProduct(productURL: string) {
             }
         ]
 
-        console.log(typeof stars, typeof reviewCount);
+        // console.log(currentPrice, originalPrice);
 
         // Return the data as an object
         const data = {
