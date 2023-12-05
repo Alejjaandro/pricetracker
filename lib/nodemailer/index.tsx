@@ -1,7 +1,7 @@
 "use server"
 
 import { EmailContent, EmailProductInfo, NotificationType } from '@/types';
-import nodemailer from 'nodemailer';
+import nodemailer from "nodemailer";
 
 const Notification = {
     WELCOME: 'WELCOME',
